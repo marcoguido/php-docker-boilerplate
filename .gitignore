@@ -1,0 +1,8 @@
+/docker/mysql/volume/**
+
+.env.docker
+
+/plus/**
+/content-provider/**
+/hub/**
+/hive/**
