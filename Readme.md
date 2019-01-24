@@ -5,13 +5,14 @@ In order to use this configuration, follow these steps:
 3. Get the docker VM IP with `docker-machine ip develop` and append it to your hosts file (`/etc/host` in UNIX world, `C:\Windows\System32\drivers\etc\hosts` if running Windows) mapping it to the hosts you want to expose (`maize.test`, `hub.maize.test`, `plus.maize.test`, `content-provider.maize.test`, `h-farm.maize.test`, `henkel.maize.test`, etc) like this `192.168.99.100		hub.maize.test`
 4. Set docker variables according to `.env.docker.example` by creating a new `.env.docker` file in the root directory of the project
 5. In `.docker/webserver/Dockerfile` edit line `16` by setting your own credentials (not strictly required, still it's a good thing to do)
-5. Execute `docker-compose up -d --build` in order to build all the stuff
-6. Open PHPStorm and head to the settings to configure XDebug
+6. Clone all the modules of the ecosystem inside this directory and name them `hive` (`maize.io`), `hub`, `content-provider`, `plus`
+7. Execute `docker-compose up -d --build` in order to build all the stuff
+8. Open PHPStorm and head to the settings to configure XDebug
 	- Head to `Preferences | Languages & Frameworks | PHP` and click on the button `...` in order to configure a new interpreter
 	- Click on the `+` button choosing `From Docker, Vagrant, VM, etc`
 	- Choose `Docker` from the radio button choices
 	- Add a new server by clicking on `New...` in "Server" row
-	- In the dropdown relative to "Image name", choose `ejob_app:php`
+	- In the dropdown relative to "Image name", choose `maize_app:php`
 	- Click on `Ok` and wait for the IDE to check that everything is ok
 	- Click on `Ok` once again to head back to the main settings window
 	- On the line `Docker container`, click on the folder icon
@@ -21,6 +22,7 @@ In order to use this configuration, follow these steps:
 	- Head to `Preferences | Languages & Frameworks | PHP | Servers` and add a new server with the `+` icon
 	- Name it `maize-docker` and as the host, set the url of the current site, then check the `Use port mappings` checkbox
 	- Under the "Project files" section, add as the `Absolute path on the server`, paste `/var/www/html/PROJECT-DIR` related to the root directory of the project
-	- Click then on `Apply`
-	- Add as new run configuration this command `docker-machine start develop && docker-compose up -d` and use it to start everything on each system reboot
-	- Access the main application container when needed by typing in a terminal pointing to the directory holding the `docker-compose.yml` file `docker-compose run php bash`
+	- Repeat the last 2 steps for each virtual host that the `hub` module has to expose
+	- After the last iteration, click on `Apply`
+9. On each system reboot, in terminal run `docker-machine start develop` then `cd` to this directory (the one containing the `docker-compose.yml` file) and execute `docker-compose up -d`.
+10. Access the main application container when needed by typing in a terminal pointing to this directory (the one containing the `docker-compose.yml` file) `docker-compose run php bash`
