@@ -1,12 +1,12 @@
 In order to use this configuration, follow these steps:
 
 1. Install [Docker desktop](https://www.docker.com/products/docker-desktop) if running either Windows or MacOS, only the [Docker engine](https://www.docker.com/products/docker-engine) if on Linux
-2. In the terminal, run `docker-machine create develop` to create a new docker-machine (step needed for Mac users, not sure for others) with the client application NOT running
-3. Get the docker VM IP with `docker-machine ip develop` and append it to your hosts file (`/etc/host` in UNIX world, `C:\Windows\System32\drivers\etc\hosts` if running Windows) mapping it to the hosts you want to expose (`maize.test`, `hub.maize.test`, `plus.maize.test`, `content-provider.maize.test`, `h-farm.maize.test`, `henkel.maize.test`, etc) like this `192.168.99.100		hub.maize.test`
+2. In the terminal, run `docker-machine create default --driver=virtualbox` to create a new docker-machine (step needed for Mac users, if it's the first docker project)
+3. Get the docker VM IP with `docker-machine ip default` and append it to your hosts file (`/etc/host` in UNIX world, `C:\Windows\System32\drivers\etc\hosts` if running Windows) mapping it to the hosts you want to expose (`maize.test`, `hub.maize.test`, `plus.maize.test`, `content-provider.maize.test`, `h-farm.maize.test`, `henkel.maize.test`, etc) like this `192.168.99.100		hub.maize.test`
 4. Set docker variables according to `.env.docker.example` by creating a new `.env.docker` file in the root directory of the project
 5. In `.docker/webserver/Dockerfile` edit line `16` by setting your own credentials (not strictly required, still it's a good thing to do)
 6. Clone all the modules of the ecosystem inside this directory and name them `hive` (`maize.io`), `hub`, `content-provider`, `plus`
-7. Execute `docker-compose up -d --build` in order to build all the stuff
+7. `cd` into the working directory and execute `docker-compose up -d --build` in order to build all the stuff
 8. Open PHPStorm and head to the settings to configure XDebug
 	- Head to `Preferences | Languages & Frameworks | PHP` and click on the button `...` in order to configure a new interpreter
 	- Click on the `+` button choosing `From Docker, Vagrant, VM, etc`
