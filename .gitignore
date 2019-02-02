@@ -1,5 +1,7 @@
 /docker/mysql/volume/**
 !/docker/mysql/volume/.gitkeep
+/docker/postgres/volume/**
+!/docker/postgres/volume/.gitkeep
 
 .env.docker
 
