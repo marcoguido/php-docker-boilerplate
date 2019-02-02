@@ -13,7 +13,7 @@ RUN apt-get update \
 
 # Create SSL certificates
 RUN mkdir /etc/ssl/certificates \
-    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/L=Marcon/O=Egea Tecnologie Informatiche/OU=IT/CN=maize.test"
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/L=Marcon/O=Egea Tecnologie Informatiche/OU=IT/CN=project.test"
 
 RUN usermod -u 1000 www-data
 
