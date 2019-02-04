@@ -24,8 +24,6 @@ RUN mkdir -p /usr/share/man/man1 \
         libcurl4-gnutls-dev \
         libbz2-dev \
         libssl-dev \
-        mysql-client \
-        postgresql-client \
         zlib1g-dev \
         gnupg2 \
         g++ \
@@ -34,12 +32,18 @@ RUN mkdir -p /usr/share/man/man1 \
         python \
         libzip-dev \
         zip \
-        && rm -rf /var/lib/apt/lists/* \
-        && apt-get clean
+        ruby-dev \
+        gcc\
+        automake \
+        libtool \
+        rubygems \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && gem install sass
 
 RUN docker-php-ext-install opcache \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install pdo_pgsql \
+    && docker-php-ext-install pdo \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install zip \
     && docker-php-ext-install json \
@@ -49,6 +53,35 @@ RUN docker-php-ext-install opcache \
     && docker-php-ext-install curl \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd
+
+######################
+# MYSQL INSTALLATION #
+######################
+
+ARG INSTALL_MYSQL=false
+RUN if [ ${INSTALL_MYSQL} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y mysql-client \
+    && docker-php-ext-install pdo_mysql \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+;fi
+
+######################
+# PGSQL INSTALLATION #
+######################
+
+ARG INSTALL_PGSQL=false
+RUN if [ ${INSTALL_PGSQL} = true ]; then \
+   apt-get update -yqq \
+   && apt-get install -y postgresql-client \
+        libpq-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pgsql \
+    && docker-php-ext-install pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+;fi
 
 #######################
 # XDEBUG INSTALLATION #
@@ -69,7 +102,8 @@ COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/20-xdebug.ini
 ARG INSTALL_IMAGIK=false
 RUN if [ ${INSTALL_IMAGIK} = true ]; then \
     # Installing the library and php extension
-    apt-get install -y libmagickwand-dev --no-install-recommends \
+    apt-get update -yqq \
+    && apt-get install -y libmagickwand-dev --no-install-recommends \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && rm -rf /var/lib/apt/lists/* \
@@ -116,7 +150,7 @@ ENV PATH="./vendor/bin:$PATH"
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 RUN source $HOME/.nvm/nvm.sh \
         && nvm --version \
-        && nvm install 8 \
+        && nvm install ${PREFERRED_NODE_VERSION} \
         && npm i -g gulp
 
 RUN usermod -u 1000 www-data

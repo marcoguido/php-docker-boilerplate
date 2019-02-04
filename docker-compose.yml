@@ -24,7 +24,9 @@ services:
         - INSTALL_XDEBUG=true
         - INSTALL_PHPREDIS=true
         - INSTALL_INTL=true
-        - INSTALL_IMAGIK=true
+        - INSTALL_IMAGIK=false
+        - INSTALL_PGSQL=true
+        - INSTALL_MYSQL=false
       context: ./
       dockerfile: ./docker/php/Dockerfile
     env_file: .env.docker
