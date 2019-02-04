@@ -23,6 +23,7 @@ RUN apt-get update \
         libbz2-dev \
         libssl-dev \
         mysql-client \
+        postgresql-client \
         zlib1g-dev \
         gnupg2 \
         g++ \
@@ -34,6 +35,7 @@ RUN apt-get update \
 
 RUN docker-php-ext-install opcache \
     && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install pdo_pgsql \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install zip \
     && docker-php-ext-install json \
