@@ -12,7 +12,9 @@ COPY ./docker/php/php.ini /usr/local/etc/php/
 COPY ./docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Install VM libraries and software
-RUN apt-get update \
+RUN mkdir -p /usr/share/man/man1 \
+    && mkdir -p /usr/share/man/man7 \
+    && apt-get update \
     && apt-get install -y \
         libxml2-dev \
         libicu-dev \
@@ -31,7 +33,9 @@ RUN apt-get update \
         vim \
         python \
         libzip-dev \
-        zip
+        zip \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
 
 RUN docker-php-ext-install opcache \
     && docker-php-ext-install pdo_mysql \
@@ -68,6 +72,8 @@ RUN if [ ${INSTALL_IMAGIK} = true ]; then \
     apt-get install -y libmagickwand-dev --no-install-recommends \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
 ;fi
 
 ##########################
@@ -91,6 +97,8 @@ RUN if [ ${INSTALL_INTL} = true ]; then \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
 ;fi
 
 ############
