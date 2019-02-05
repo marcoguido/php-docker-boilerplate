@@ -21,15 +21,15 @@ services:
   php:
     build:
       args:
-        - INSTALL_XDEBUG=true
-        - INSTALL_PHPREDIS=true
-        - INSTALL_INTL=true
-        - INSTALL_IMAGIK=false
-        - INSTALL_PGSQL=true
-        - INSTALL_MYSQL=false
+        - INSTALL_XDEBUG='true'
+        - INSTALL_PHPREDIS='true'
+        - INSTALL_INTL='true'
+        - INSTALL_IMAGIK='false'
+        - INSTALL_PGSQL='true'
+        - INSTALL_MYSQL='false'
+        - PREFERRED_NODE_VERSION=6.11.5
       context: ./
       dockerfile: ./docker/php/Dockerfile
-    env_file: .env.docker
     environment:
       - XDEBUG_CONFIG=remote_host=192.168.99.1 remote_port=9001 remote_connect_back=0 idekey=PHPSTORM
       - PHP_IDE_CONFIG=serverName=docker-server
@@ -49,16 +49,14 @@ services:
       - ./docker/mysql/volume:/var/lib/mysql/:rw # stateful container => persistent DB
 
   postgres:
-    build:
-      context: ./
-      dockerfile: ./docker/postgres/Dockerfile
+    image: postgres:latest
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=mysecret
     ports:
-      - "54320:5432" # host:docker-machine
+      - "54320:5432"
     volumes:
-      - ./docker/postgres/volume:/var/lib/postgresql/:rw # stateful container => persistent DB
+      - ./docker/postgres/:/var/lib/postgresql/data # stateful container => persistent DB
 
 
   redis:

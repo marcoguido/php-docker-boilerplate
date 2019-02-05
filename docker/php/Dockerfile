@@ -59,7 +59,7 @@ RUN docker-php-ext-install opcache \
 ######################
 
 ARG INSTALL_MYSQL=false
-RUN if [ ${INSTALL_MYSQL} = true ]; then \
+RUN if [ $INSTALL_MYSQL = true ]; then \
     apt-get update -yqq \
     && apt-get install -y mysql-client \
     && docker-php-ext-install pdo_mysql \
@@ -72,7 +72,7 @@ RUN if [ ${INSTALL_MYSQL} = true ]; then \
 ######################
 
 ARG INSTALL_PGSQL=false
-RUN if [ ${INSTALL_PGSQL} = true ]; then \
+RUN if [ $INSTALL_PGSQL = true ]; then \
    apt-get update -yqq \
    && apt-get install -y postgresql-client \
         libpq-dev \
@@ -88,7 +88,7 @@ RUN if [ ${INSTALL_PGSQL} = true ]; then \
 #######################
 
 ARG INSTALL_XDEBUG=false
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+RUN if [ $INSTALL_XDEBUG = true ]; then \
     pecl install xdebug \
     && docker-php-ext-enable xdebug \
 ;fi
@@ -100,7 +100,7 @@ COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/20-xdebug.ini
 ############################
 
 ARG INSTALL_IMAGIK=false
-RUN if [ ${INSTALL_IMAGIK} = true ]; then \
+RUN if [ $INSTALL_IMAGIK = true ]; then \
     # Installing the library and php extension
     apt-get update -yqq \
     && apt-get install -y libmagickwand-dev --no-install-recommends \
@@ -115,7 +115,7 @@ RUN if [ ${INSTALL_IMAGIK} = true ]; then \
 ##########################
 
 ARG INSTALL_PHPREDIS=false
-RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
+RUN if [ $INSTALL_PHPREDIS = true ]; then \
     pecl install -o -f redis \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis \
@@ -126,7 +126,7 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 #####################
 
 ARG INSTALL_INTL=false
-RUN if [ ${INSTALL_INTL} = true ]; then \
+RUN if [ $INSTALL_INTL = true ]; then \
     apt-get update -yqq \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
@@ -147,10 +147,11 @@ ENV PATH="./vendor/bin:$PATH"
 # NVM & NODEJS #
 ################
 
+ARG PREFERRED_NODE_VERSION
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 RUN source $HOME/.nvm/nvm.sh \
         && nvm --version \
-        && nvm install ${PREFERRED_NODE_VERSION} \
+        && nvm install $PREFERRED_NODE_VERSION \
         && npm i -g gulp
 
 RUN usermod -u 1000 www-data

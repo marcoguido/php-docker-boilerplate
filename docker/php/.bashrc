@@ -1,7 +1,7 @@
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-nvm alias default ${NVM_DEFAULT_VERSION};
+nvm alias default $NVM_DEFAULT_VERSION;
 
 find-up () {
     path=$(pwd)
