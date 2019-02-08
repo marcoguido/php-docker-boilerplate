@@ -1,0 +1,21 @@
+#################
+# Example VHost #
+#################
+
+# The Alias directive can be useful to map a BE to the same domain of the FE
+
+# If the request is made via HTTP, it will be safely redirected to HTTPS
+<VirtualHost *:80>
+    ServerName hub.maize.test
+    Redirect / https://hub.maize.test
+</VirtualHost>
+
+<VirtualHost *:443>
+    DocumentRoot "/var/www/html"
+    ErrorLog "logs/hub_maize_test_log"
+    ServerName hub.maize.test
+    # Alias /api "/var/www/html/PATH/TO/ALIASED/DIR"
+    SSLEngine on
+    SSLCertificateFile "/etc/ssl/certificates/server.crt"
+    SSLCertificateKeyFile "/etc/ssl/certificates/server.key"
+</VirtualHost>

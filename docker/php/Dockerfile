@@ -1,19 +1,26 @@
-FROM php:7.0-fpm
+ARG PHP_VERSION
+FROM php:${PHP_VERSION}
 
 LABEL maintainer="Marco Guidolin"
 
+# Overwrite sh binary with bash one (in order to source files and other cool stuff)
 RUN mv /bin/sh /bin/sh.old && ln -s /bin/bash /bin/sh
 
 # Copy the bashrc file to the container
 COPY ./docker/php/.bashrc /root/.bashrc
+RUN sed -i 's/\r//' /root/.bashrc
+
+# Add the extra hosts in order for application modules to communicate
+# with each other
+COPY ./docker/php/conf/project-hosts /etc/project-hosts
+RUN cat /etc/project-hosts >> /etc/hosts
 
 # Copy php configuration files
-COPY ./docker/php/php.ini /usr/local/etc/php/
-COPY ./docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY ./docker/php/conf/php.ini /usr/local/etc/php/
+COPY ./docker/php/conf/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Install VM libraries and software
-RUN mkdir -p /usr/share/man/man1 \
-    && mkdir -p /usr/share/man/man7 \
+RUN mkdir -p /usr/share/man/{man1,man7} \
     && apt-get update \
     && apt-get install -y \
         libxml2-dev \
@@ -32,15 +39,12 @@ RUN mkdir -p /usr/share/man/man1 \
         python \
         libzip-dev \
         zip \
-        ruby-dev \
         gcc\
         automake \
         libtool \
-        rubygems \
         build-essential \
     && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
-    && gem install sass
+    && apt-get clean
 
 RUN docker-php-ext-install opcache \
     && docker-php-ext-install pdo \
@@ -59,7 +63,7 @@ RUN docker-php-ext-install opcache \
 ######################
 
 ARG INSTALL_MYSQL=false
-RUN if [ $INSTALL_MYSQL = true ]; then \
+RUN if [ ${INSTALL_MYSQL} = true ]; then \
     apt-get update -yqq \
     && apt-get install -y mysql-client \
     && docker-php-ext-install pdo_mysql \
@@ -72,7 +76,7 @@ RUN if [ $INSTALL_MYSQL = true ]; then \
 ######################
 
 ARG INSTALL_PGSQL=false
-RUN if [ $INSTALL_PGSQL = true ]; then \
+RUN if [ ${INSTALL_PGSQL} = true ]; then \
    apt-get update -yqq \
    && apt-get install -y postgresql-client \
         libpq-dev \
@@ -88,19 +92,19 @@ RUN if [ $INSTALL_PGSQL = true ]; then \
 #######################
 
 ARG INSTALL_XDEBUG=false
-RUN if [ $INSTALL_XDEBUG = true ]; then \
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     pecl install xdebug \
     && docker-php-ext-enable xdebug \
 ;fi
 
-COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/20-xdebug.ini
+COPY ./docker/php/conf/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 ############################
 # IMAGEMAGICK INSTALLATION #
 ############################
 
 ARG INSTALL_IMAGIK=false
-RUN if [ $INSTALL_IMAGIK = true ]; then \
+RUN if [ ${INSTALL_IMAGIK} = true ]; then \
     # Installing the library and php extension
     apt-get update -yqq \
     && apt-get install -y libmagickwand-dev --no-install-recommends \
@@ -115,7 +119,7 @@ RUN if [ $INSTALL_IMAGIK = true ]; then \
 ##########################
 
 ARG INSTALL_PHPREDIS=false
-RUN if [ $INSTALL_PHPREDIS = true ]; then \
+RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     pecl install -o -f redis \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis \
@@ -126,7 +130,7 @@ RUN if [ $INSTALL_PHPREDIS = true ]; then \
 #####################
 
 ARG INSTALL_INTL=false
-RUN if [ $INSTALL_INTL = true ]; then \
+RUN if [ ${INSTALL_INTL} = true ]; then \
     apt-get update -yqq \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
@@ -143,6 +147,21 @@ RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV PATH="./vendor/bin:$PATH"
 
+#####################
+# SASS INSTALLATION #
+#####################
+
+ARG INSTALL_SASS=false
+RUN if [ ${INSTALL_SASS} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y \
+        ruby-dev \
+        rubygems \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && gem install sass \
+;fi
+
 ################
 # NVM & NODEJS #
 ################
@@ -151,18 +170,29 @@ ARG PREFERRED_NODE_VERSION
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 RUN source $HOME/.nvm/nvm.sh \
         && nvm --version \
-        && nvm install $PREFERRED_NODE_VERSION \
-        && npm i -g gulp
+        && nvm install ${PREFERRED_NODE_VERSION}
+
+#####################
+# GULP INSTALLATION #
+#####################
+
+ARG INSTALL_GULP=false
+RUN if [ ${INSTALL_GULP} = true ]; then \
+    npm i -g gulp \
+;fi
 
 RUN usermod -u 1000 www-data
 
 # Create SSL certificates & set permissions to them
 RUN mkdir /etc/ssl/certificates \
-    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/L=Marcon/O=Egea Tecnologie Informatiche/OU=IT/CN=ejob.test" \
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/O=Webdev Agency/OU=IT/CN=*.test" \
     && chown www-data:www-data /etc/ssl/certificates/*
 
 
 CMD ["php-fpm"]
 
-EXPOSE 9000
-EXPOSE 9001
+ARG PHP_PORT
+EXPOSE ${PHP_PORT}
+
+ARG PHP_XDEBUG_PORT
+EXPOSE ${PHP_XDEBUG_PORT}

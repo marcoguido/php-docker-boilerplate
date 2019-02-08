@@ -2,62 +2,121 @@ version: '3'
 
 services:
 
-  web:
+  nginx:
     build:
-      context: ./
-      dockerfile: ./docker/webserver/Dockerfile
-    env_file: .env.docker
+      args:
+        - NGINX_VERSION=${NGINX_VERSION}
+        - HTTP_PORT=${HTTP_PORT}
+        - HTTPS_PORT=${HTTP_PORT}
+      context: .
+      dockerfile: docker/webservers/nginx/Dockerfile
+    env_file: .env
+    networks:
+      project:
     ports:
-        - "80:80"
-        - "443:443"
+      - "80:80"
+    restart: on-failure
     volumes:
+        - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
         - ./:/var/www/html
-    links:
-        - php
-        - mysql
-        - redis
-        - postgres
+
+  apache:
+    build:
+      args:
+        - APACHE_VERSION=${APACHE_VERSION}
+        - HTTP_PORT=${HTTP_PORT}
+        - HTTPS_PORT=${HTTP_PORT}
+      context: .
+      dockerfile: docker/webservers/apache/Dockerfile
+    env_file: .env
+    networks:
+      project:
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: on-failure
+    volumes:
+      - ./docker/webservers/nginx/conf:/usr/local/apache2/conf/extra/vhosts/:rw
+      - ./:/var/www/html
 
   php:
     build:
       args:
-        - INSTALL_XDEBUG='true'
-        - INSTALL_PHPREDIS='true'
-        - INSTALL_INTL='true'
-        - INSTALL_IMAGIK='false'
-        - INSTALL_PGSQL='true'
-        - INSTALL_MYSQL='false'
-        - PREFERRED_NODE_VERSION=6.11.5
-      context: ./
-      dockerfile: ./docker/php/Dockerfile
+        # General PHP vars
+        - PHP_VERSION=${PHP_VERSION}
+        - PHP_PORT=${PHP_PORT}
+        - PHP_XDEBUG_PORT=${PHP_XDEBUG_PORT}
+
+        # XDebug
+        - PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY}
+        - PHP_XDEBUG_REMOTE_HOST=${PHP_XDEBUG_REMOTE_HOST}
+        - PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT}
+        - PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK}
+        - PHP_XDEBUG_LOG_DIR=${PHP_XDEBUG_LOG_DIR}
+
+        # PHP modules
+        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
+        - INSTALL_PHPREDIS=${INSTALL_PHPREDIS}
+        - INSTALL_INTL=${INSTALL_INTL}
+        - INSTALL_IMAGIK=${INSTALL_IMAGIK}
+        - INSTALL_PGSQL=${INSTALL_PGSQL}
+        - INSTALL_MYSQL=${INSTALL_MYSQL}
+
+        # FE tools
+        - PREFERRED_NODE_VERSION=${PREFERRED_NODE_VERSION}
+        - INSTALL_SASS=${INSTALL_SASS}
+        - INSTALL_GULP=${INSTALL_GULP}
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file: .env
+    networks:
+      project:
     environment:
-      - XDEBUG_CONFIG=remote_host=192.168.99.1 remote_port=9001 remote_connect_back=0 idekey=PHPSTORM
       - PHP_IDE_CONFIG=serverName=docker-server
     volumes:
-        - ./:/var/www/html
+      - ./:/var/www/html
 
   mysql:
     build:
-      context: ./
-      dockerfile: ./docker/mysql/Dockerfile
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_ROOT_PASSWORD=mysecret
+      args:
+        - MYSQL_VERSION=${MYSQL_VERSION}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    env_file: .env
+    networks:
+      project:
+      database:
+        aliases:
+          - mysql
     ports:
-      - "33060:3306" # host:docker-machine
+      - "33060:3306"
+    restart: on-failure
     volumes:
-      - ./docker/mysql/volume:/var/lib/mysql/:rw # stateful container => persistent DB
-
+      - ./docker/mysql/mydata:/var/lib/mysql/:rw
   postgres:
-    image: postgres:latest
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=mysecret
+    build:
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+    env_file: .env
+    networks:
+      project:
+      database:
+        aliases:
+          - postgres
     ports:
       - "54320:5432"
+    restart: on-failure
     volumes:
-      - ./docker/postgres/:/var/lib/postgresql/data # stateful container => persistent DB
-
-
+        - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
   redis:
     image: redis:alpine
+
+networks:
+  project:
+  database:

@@ -1,21 +1,24 @@
-# maize.test
+#################
+# Example VHost #
+#################
+
+# If the request is made via HTTP, it will be safely redirected to HTTPS
 server {
     listen 80;
-    server_name maize.test;
+    server_name EXAMPLE.test;
     return 301 https://$host$request_uri;
 }
 
 server {
     index index.php index.html;
-    root /var/www/html/hive/public;
+    root /var/www/html/PATH/TO/PROJECT;
 
     listen 443 ssl;
-    server_name maize.test;
+    server_name EXAMPLE.test;
 
     access_log /var/log/nginx/access.log;
     error_log  /var/log/nginx/error.log;
 
-    ssl on;
     ssl_certificate /etc/ssl/certificates/server.crt;
     ssl_certificate_key /etc/ssl/certificates/server.key;
     ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
