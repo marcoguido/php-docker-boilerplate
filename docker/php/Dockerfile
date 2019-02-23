@@ -166,11 +166,14 @@ RUN if [ ${INSTALL_SASS} = true ]; then \
 # NVM & NODEJS #
 ################
 
+ARG INSTALL_NVM=false
 ARG PREFERRED_NODE_VERSION
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-RUN source $HOME/.nvm/nvm.sh \
-        && nvm --version \
-        && nvm install ${PREFERRED_NODE_VERSION}
+RUN if [ ${INSTALL_NVM} = true ]; then \
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash \
+    && source $HOME/.nvm/nvm.sh \
+    && nvm --version \
+    && nvm install ${PREFERRED_NODE_VERSION} \
+fi;
 
 #####################
 # GULP INSTALLATION #
@@ -183,7 +186,7 @@ RUN if [ ${INSTALL_GULP} = true ]; then \
 
 RUN usermod -u 1000 www-data
 
-# Create SSL certificates & set permissions to them
+# Create SSL certificates & set permissions to them for projects that require them
 RUN mkdir /etc/ssl/certificates \
     && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/O=Webdev Agency/OU=IT/CN=*.test" \
     && chown www-data:www-data /etc/ssl/certificates/*

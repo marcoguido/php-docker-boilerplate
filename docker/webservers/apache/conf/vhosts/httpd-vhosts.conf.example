@@ -12,10 +12,10 @@
 
 <VirtualHost *:443>
     DocumentRoot "/var/www/html"
-    ErrorLog "logs/hub_maize_test_log"
+    ErrorLog "/var/www/logs/hub_maize_test_log"
     ServerName hub.maize.test
     # Alias /api "/var/www/html/PATH/TO/ALIASED/DIR"
     SSLEngine on
-    SSLCertificateFile "/etc/ssl/certificates/server.crt"
-    SSLCertificateKeyFile "/etc/ssl/certificates/server.key"
+    SSLCertificateFile "/opt/docker/etc/httpd/ssl/server.crt"
+    SSLCertificateKeyFile "/opt/docker/etc/httpd/ssl/server.key"
 </VirtualHost>

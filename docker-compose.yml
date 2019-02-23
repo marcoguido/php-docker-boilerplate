@@ -15,6 +15,7 @@ services:
       project:
     ports:
       - "80:80"
+      - "443:443"
     restart: on-failure
     volumes:
         - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
@@ -23,9 +24,9 @@ services:
   apache:
     build:
       args:
-        - APACHE_VERSION=${APACHE_VERSION}
         - HTTP_PORT=${HTTP_PORT}
         - HTTPS_PORT=${HTTP_PORT}
+        - PHP_PORT=${PHP_PORT}
       context: .
       dockerfile: docker/webservers/apache/Dockerfile
     env_file: .env
@@ -36,7 +37,7 @@ services:
       - "443:443"
     restart: on-failure
     volumes:
-      - ./docker/webservers/nginx/conf:/usr/local/apache2/conf/extra/vhosts/:rw
+      - ./docker/webservers/apache/conf/vhosts:/etc/apache2/sites-available/:rw
       - ./:/var/www/html
 
   php:
@@ -64,6 +65,7 @@ services:
 
         # FE tools
         - PREFERRED_NODE_VERSION=${PREFERRED_NODE_VERSION}
+        - INSTALL_NVM=${INSTALL_NVM}
         - INSTALL_SASS=${INSTALL_SASS}
         - INSTALL_GULP=${INSTALL_GULP}
       context: .
@@ -71,6 +73,7 @@ services:
     env_file: .env
     networks:
       project:
+      database:
     environment:
       - PHP_IDE_CONFIG=serverName=docker-server
     volumes:
@@ -116,6 +119,8 @@ services:
         - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
   redis:
     image: redis:alpine
+    ports:
+      - "63790:6379"
 
 networks:
   project:

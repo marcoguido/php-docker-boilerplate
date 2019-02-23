@@ -7,7 +7,7 @@ LABEL maintainer="Marco Guidolin"
 RUN mv /bin/sh /bin/sh.old && ln -s /bin/bash /bin/sh
 
 # Copy nginx vhosts
-COPY ./docker/webservers/nginx/vhosts /etc/nginx/conf.d/
+COPY ./docker/webservers/nginx/conf /etc/nginx/conf.d/
 
 # Install container libraries and software
 RUN apt-get update \
