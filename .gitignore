@@ -1,12 +1,4 @@
 .idea
 
-/docker/mysql/volume/**
-/docker/postgres/**
-
 .env
 !.env.example
-
-/plus/**
-/content-provider/**
-/hub/**
-/hive/**

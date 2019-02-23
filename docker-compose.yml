@@ -98,6 +98,7 @@ services:
     restart: on-failure
     volumes:
       - ./docker/mysql/mydata:/var/lib/mysql/:rw
+
   postgres:
     build:
       args:
@@ -116,7 +117,8 @@ services:
       - "54320:5432"
     restart: on-failure
     volumes:
-        - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
+        - pgdata:/var/lib/postgresql/data/:rw
+
   redis:
     image: redis:alpine
     ports:
@@ -125,3 +127,6 @@ services:
 networks:
   project:
   database:
+
+volumes:
+  pgdata: {}
