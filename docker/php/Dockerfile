@@ -13,6 +13,7 @@ RUN sed -i 's/\r//' /root/.bashrc
 # Add the extra hosts in order for application modules to communicate
 # with each other
 COPY ./docker/php/conf/project-hosts /etc/project-hosts
+RUN sed -i 's/\r//' /etc/project-hosts
 RUN cat /etc/project-hosts >> /etc/hosts
 
 # Copy php configuration files
