@@ -12,14 +12,14 @@ COPY ./docker/webservers/nginx/conf /etc/nginx/conf.d/
 # Install container libraries and software
 RUN apt-get update \
     && apt-get install -y \
-        git \
         vim \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
 # Create SSL certificates
+ARG CERT_CONTENT
 RUN mkdir /etc/ssl/certificates \
-    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/O=Webdev Agency/OU=IT/CN=*.test"
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj ${CERT_CONTENT}
 
 RUN usermod -u 1000 www-data
 

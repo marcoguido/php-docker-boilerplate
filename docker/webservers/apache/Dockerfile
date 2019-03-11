@@ -19,7 +19,8 @@ RUN apt-get update \
     && apt-get clean
 
 # Create SSL certificates
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/docker/etc/httpd/ssl/server.key -out /opt/docker/etc/httpd/ssl/server.crt -subj "/C=IT/ST=Veneto/O=Webdev Agency/OU=IT/CN=*.test"
+ARG CERT_CONTENT
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /opt/docker/etc/httpd/ssl/server.key -out /opt/docker/etc/httpd/ssl/server.crt -subj ${CERT_CONTENT}
 
 ARG PHP_PORT
 ARG PHP_UPSTREAM_CONTAINER=php

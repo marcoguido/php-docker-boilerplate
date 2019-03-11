@@ -77,8 +77,8 @@ RUN if [ ${INSTALL_MYSQL} = true ]; then \
 
 ARG INSTALL_PGSQL=false
 RUN if [ ${INSTALL_PGSQL} = true ]; then \
-   apt-get update -yqq \
-   && apt-get install -y postgresql-client \
+    apt-get update -yqq \
+    && apt-get install -y postgresql-client \
         libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pgsql \
@@ -97,15 +97,13 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     && docker-php-ext-enable xdebug \
 ;fi
 
-COPY ./docker/php/conf/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
 ############################
 # IMAGEMAGICK INSTALLATION #
 ############################
 
 ARG INSTALL_IMAGIK=false
+# Installing the library and php extension
 RUN if [ ${INSTALL_IMAGIK} = true ]; then \
-    # Installing the library and php extension
     apt-get update -yqq \
     && apt-get install -y libmagickwand-dev --no-install-recommends \
     && pecl install imagick \
@@ -169,11 +167,11 @@ RUN if [ ${INSTALL_SASS} = true ]; then \
 ARG INSTALL_NVM=false
 ARG PREFERRED_NODE_VERSION
 RUN if [ ${INSTALL_NVM} = true ]; then \
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash \
+    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash \
     && source $HOME/.nvm/nvm.sh \
     && nvm --version \
     && nvm install ${PREFERRED_NODE_VERSION} \
-fi;
+;fi
 
 #####################
 # GULP INSTALLATION #
@@ -184,18 +182,23 @@ RUN if [ ${INSTALL_GULP} = true ]; then \
     npm i -g gulp \
 ;fi
 
+
+####################
+# SSL certificates #
+####################
+
 RUN usermod -u 1000 www-data
 
-# Create SSL certificates & set permissions to them for projects that require them
+ARG CERT_CONTENT
+# Create the files and set permissions to them
 RUN mkdir /etc/ssl/certificates \
-    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj "/C=IT/ST=Veneto/O=Webdev Agency/OU=IT/CN=*.test" \
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certificates/server.key -out /etc/ssl/certificates/server.crt -subj ${CERT_CONTENT} \
     && chown www-data:www-data /etc/ssl/certificates/*
-
 
 CMD ["php-fpm"]
 
 ARG PHP_PORT
 EXPOSE ${PHP_PORT}
 
-ARG PHP_XDEBUG_PORT
-EXPOSE ${PHP_XDEBUG_PORT}
+ARG PHP_XDEBUG_REMOTE_PORT
+EXPOSE ${PHP_XDEBUG_REMOTE_PORT}

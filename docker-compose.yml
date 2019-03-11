@@ -5,11 +5,12 @@ services:
   nginx:
     build:
       args:
-        - NGINX_VERSION=${NGINX_VERSION}
-        - HTTP_PORT=${HTTP_PORT}
-        - HTTPS_PORT=${HTTP_PORT}
+        - NGINX_VERSION=${D_NGINX_VERSION}
+        - HTTP_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTP_PORT}
+        - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
-      dockerfile: docker/webservers/nginx/Dockerfile
+      dockerfile: ./docker/webservers/nginx/Dockerfile
     env_file: .env
     networks:
       project:
@@ -24,11 +25,12 @@ services:
   apache:
     build:
       args:
-        - HTTP_PORT=${HTTP_PORT}
-        - HTTPS_PORT=${HTTP_PORT}
-        - PHP_PORT=${PHP_PORT}
+        - HTTP_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTP_PORT}
+        - PHP_PORT=${D_PHP_PORT}
+        - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
-      dockerfile: docker/webservers/apache/Dockerfile
+      dockerfile: ./docker/webservers/apache/Dockerfile
     env_file: .env
     networks:
       project:
@@ -44,37 +46,34 @@ services:
     build:
       args:
         # General PHP vars
-        - PHP_VERSION=${PHP_VERSION}
-        - PHP_PORT=${PHP_PORT}
-        - PHP_XDEBUG_PORT=${PHP_XDEBUG_PORT}
+        - PHP_VERSION=${D_PHP_VERSION}
+        - PHP_PORT=${D_PHP_PORT}
+        - CERT_CONTENT=${D_SSL_CERT_CONTENT}
 
         # XDebug
-        - PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY}
-        - PHP_XDEBUG_REMOTE_HOST=${PHP_XDEBUG_REMOTE_HOST}
-        - PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT}
-        - PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK}
-        - PHP_XDEBUG_LOG_DIR=${PHP_XDEBUG_LOG_DIR}
+        - PHP_XDEBUG_REMOTE_PORT=${D_PHP_XDEBUG_REMOTE_PORT}
 
         # PHP modules
-        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
-        - INSTALL_PHPREDIS=${INSTALL_PHPREDIS}
-        - INSTALL_INTL=${INSTALL_INTL}
-        - INSTALL_IMAGIK=${INSTALL_IMAGIK}
-        - INSTALL_PGSQL=${INSTALL_PGSQL}
-        - INSTALL_MYSQL=${INSTALL_MYSQL}
+        - INSTALL_XDEBUG=${D_INSTALL_XDEBUG}
+        - INSTALL_PHPREDIS=${D_INSTALL_PHPREDIS}
+        - INSTALL_INTL=${D_INSTALL_INTL}
+        - INSTALL_IMAGIK=${D_INSTALL_IMAGIK}
+        - INSTALL_PGSQL=${D_INSTALL_PGSQL}
+        - INSTALL_MYSQL=${D_INSTALL_MYSQL}
 
         # FE tools
-        - PREFERRED_NODE_VERSION=${PREFERRED_NODE_VERSION}
-        - INSTALL_NVM=${INSTALL_NVM}
-        - INSTALL_SASS=${INSTALL_SASS}
-        - INSTALL_GULP=${INSTALL_GULP}
+        - PREFERRED_NODE_VERSION=${D_PREFERRED_NODE_VERSION}
+        - INSTALL_NVM=${D_INSTALL_NVM}
+        - INSTALL_SASS=${D_INSTALL_SASS}
+        - INSTALL_GULP=${D_INSTALL_GULP}
       context: .
-      dockerfile: docker/php/Dockerfile
+      dockerfile: ./docker/php/Dockerfile
     env_file: .env
     networks:
       project:
       database:
     environment:
+      - XDEBUG_CONFIG=remote_host=${D_PHP_XDEBUG_REMOTE_HOST} remote_port=${D_PHP_XDEBUG_REMOTE_PORT} remote_connect_back=${D_PHP_XDEBUG_REMOTE_CONNECT_BACK} idekey=${D_PHP_XDEBUG_IDEKEY} remote_log=${D_PHP_XDEBUG_LOG_DIR}
       - PHP_IDE_CONFIG=serverName=docker-server
     volumes:
       - ./:/var/www/html
@@ -82,11 +81,11 @@ services:
   mysql:
     build:
       args:
-        - MYSQL_VERSION=${MYSQL_VERSION}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_VERSION=${D_MYSQL_VERSION}
+        - MYSQL_USER=${D_MYSQL_USER}
+        - MYSQL_ROOT_PASSWORD=${D_MYSQL_ROOT_PASSWORD}
       context: .
-      dockerfile: docker/mysql/Dockerfile
+      dockerfile: ./docker/mysql/Dockerfile
     env_file: .env
     networks:
       project:
@@ -102,11 +101,11 @@ services:
   postgres:
     build:
       args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION}
-        - POSTGRES_USER=${POSTGRES_USER}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_VERSION=${D_POSTGRES_VERSION}
+        - POSTGRES_USER=${D_POSTGRES_USER}
+        - POSTGRES_PASSWORD=${D_POSTGRES_PASSWORD}
       context: .
-      dockerfile: docker/postgres/Dockerfile
+      dockerfile: ./docker/postgres/Dockerfile
     env_file: .env
     networks:
       project:
