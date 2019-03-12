@@ -6,14 +6,14 @@
 
 # If the request is made via HTTP, it will be safely redirected to HTTPS
 <VirtualHost *:80>
-    ServerName hub.maize.test
-    Redirect / https://hub.maize.test
+    ServerName example.test
+    Redirect / https://example.test
 </VirtualHost>
 
 <VirtualHost *:443>
     DocumentRoot "/var/www/html"
-    ErrorLog "/var/www/logs/hub_maize_test_log"
-    ServerName hub.maize.test
+    ErrorLog "/var/www/logs/example_test_log"
+    ServerName example.test
     # Alias /api "/var/www/html/PATH/TO/ALIASED/DIR"
     SSLEngine on
     SSLCertificateFile "/opt/docker/etc/httpd/ssl/server.crt"
