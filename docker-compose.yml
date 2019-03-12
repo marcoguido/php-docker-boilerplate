@@ -70,7 +70,7 @@ services:
       dockerfile: ./docker/php/Dockerfile
     env_file: .env
     environment:
-      - XDEBUG_CONFIG=remote_host=${D_PHP_XDEBUG_REMOTE_HOST} remote_port=${D_PHP_XDEBUG_REMOTE_PORT} remote_connect_back=${D_PHP_XDEBUG_REMOTE_CONNECT_BACK} idekey=${D_PHP_XDEBUG_IDEKEY} remote_log=${D_PHP_XDEBUG_LOG_DIR}
+      - XDEBUG_CONFIG=remote_host=${D_PHP_XDEBUG_REMOTE_HOST} remote_port=${D_PHP_XDEBUG_REMOTE_PORT} remote_enable==${D_PHP_XDEBUG_REMOTE_ENABLE} idekey=${D_PHP_XDEBUG_IDEKEY} remote_log=${D_PHP_XDEBUG_LOG_DIR}
       - PHP_IDE_CONFIG=serverName=docker-server
     networks:
       project:
