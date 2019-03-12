@@ -37,6 +37,8 @@ WORKDIR /var/www/html
 
 RUN usermod -u 1000 www-data
 
+RUN mkdir /var/www/logs
+
 ARG HTTP_PORT
 EXPOSE ${HTTP_PORT}
 
