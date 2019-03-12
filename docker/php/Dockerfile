@@ -144,7 +144,7 @@ RUN if [ ${INSTALL_INTL} = true ]; then \
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV PATH="./vendor/bin:$PATH"
+ENV PATH="/usr/local/bin:$PATH"
 
 #####################
 # SASS INSTALLATION #
