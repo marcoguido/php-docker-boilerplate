@@ -178,10 +178,15 @@ RUN if [ ${INSTALL_NVM} = true ]; then \
 # GULP INSTALLATION #
 #####################
 
+# As a prerequisite, also NVM has to be installed in order to be sure about
+# the presence of npm binary
 ARG INSTALL_GULP=false
-RUN if [ ${INSTALL_GULP} = true ]; then \
-    npm i -g gulp \
+RUN if [ ${INSTALL_NVM} = true ] && [ ${INSTALL_GULP} = true ]; then \
+    source  $HOME/.nvm/nvm.sh \
+    && nvm install ${PREFERRED_NODE_VERSION} \
+    && npm i -g gulp \
 ;fi
+
 
 
 ####################
