@@ -13,6 +13,7 @@ COPY ./docker/webservers/nginx/conf /etc/nginx/conf.d/
 RUN apt-get update \
     && apt-get install -y \
         vim \
+        openssl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 

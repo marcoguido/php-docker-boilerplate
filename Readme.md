@@ -57,6 +57,7 @@ Depending on the chosen scenario, the configuration procedure can be slightly di
 1. Clone this repository. Let's now assume that you'va called this folder `R`.
 2. Using the terminal (or whatever method you want), head to `R` directory and delete the `.git` folder and the `.gitignore` file.
 3. Clone all the modules of your project inside `R`.
+4. Register all the endpoints you will assign to each of your modules in the file `docker/php/conf/project-hosts` if those modules have to communicate with each other. This file will be appended to the `hosts` file of the `php` container instance.
 
 ### Second case scenario:
 

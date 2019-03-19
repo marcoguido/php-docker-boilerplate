@@ -59,6 +59,21 @@ RUN docker-php-ext-install opcache \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd
 
+
+#######################
+# MCRYPT INSTALLATION #
+#######################
+ARG INSTALL_MCRYPT=false
+RUN if [ ${INSTALL_MCRYPT} = true ] ; then \
+        if [ $(php -v | grep ^PHP | cut -d ' ' -f2 | cut -d '.' -f 1-2) = "7.0" ] ; then \
+            docker-php-ext-install mcrypt \
+        ; else \
+            pecl install mcrypt-1.0.2 \
+            && docker-php-ext-enable mcrypt \
+        ;fi \
+;fi
+
+
 ######################
 # MYSQL INSTALLATION #
 ######################
@@ -174,14 +189,39 @@ RUN if [ ${INSTALL_NVM} = true ]; then \
     && nvm install ${PREFERRED_NODE_VERSION} \
 ;fi
 
+##############
+# NVM & YARN #
+##############
+
+ARG INSTALL_YARN=false
+RUN if [ ${INSTALL_YARN} = true ]; then \
+    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash \
+    && source $HOME/.nvm/nvm.sh \
+    && nvm --version \
+    && nvm install ${PREFERRED_NODE_VERSION} \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt get update \
+    && apt-get install -yqq \
+        apt-transport-https \
+        yarn \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+;fi
+
 #####################
 # GULP INSTALLATION #
 #####################
 
+# As a prerequisite, also NVM has to be installed in order to be sure about
+# the presence of npm binary
 ARG INSTALL_GULP=false
-RUN if [ ${INSTALL_GULP} = true ]; then \
-    npm i -g gulp \
+RUN if [ ${INSTALL_NVM} = true ] && [ ${INSTALL_GULP} = true ]; then \
+    source  $HOME/.nvm/nvm.sh \
+    && nvm install ${PREFERRED_NODE_VERSION} \
+    && npm i -g gulp \
 ;fi
+
 
 
 ####################
