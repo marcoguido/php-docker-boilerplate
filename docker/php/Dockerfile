@@ -108,8 +108,21 @@ RUN if [ ${INSTALL_PGSQL} = true ]; then \
 #######################
 
 ARG INSTALL_XDEBUG=false
+ARG X_REMOTE_HOST=host.docker.internal
+ARG X_REMOTE_ENABLE
+ARG X_REMOTE_AUTOSTART
+ARG X_REMOTE_PORT
+ARG X_IDEKEY
+ARG X_LOG_DIR
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-    pecl install xdebug \
+    touch /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=${X_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_host=${X_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=${X_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_port=${X_REMOTE_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.idekey=${X_IDEKEY}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_log=${X_LOG_DIR}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && pecl install xdebug \
     && docker-php-ext-enable xdebug \
 ;fi
 
