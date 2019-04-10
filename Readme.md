@@ -6,19 +6,11 @@
 ## Prerequisites:
 
 - Install [Docker desktop](https://www.docker.com/products/docker-desktop) if running either Windows or MacOS, only the [Docker engine](https://www.docker.com/products/docker-engine) if on Linux
-- In the terminal, in order to create a new docker-machine (step needed for Mac users, **if it's the first docker project**), run:
-```
-docker-machine create default --driver=virtualbox
-```
-
-- Get the docker VM IP by running 
-```
-docker-machine ip default
-```
-- Append the value obtained with the previous command to your system *hosts* file (`/etc/host` in UNIX world, `C:\Windows\System32\drivers\etc\hosts` if running Windows), mapping it to the endpoints you want to expose for your project (in the following example `example.test` will be the endpoint which will be used to access our project), as shown below.
+- Append to your system *hosts* file (`/etc/host` in UNIX world, `C:\Windows\System32\drivers\etc\hosts` if running Windows), the new mapping(s) to the endpoints you want to expose for your project (in the following example `example.test` will be the endpoint which will be used to access our project) and your *home* IP (`127.0.0.1` should be fine), as shown below.
 ```
 ...
-192.168.99.100		example.test
+127.0.0.1		example.test
+...
 ```
 
 ## Use cases:
@@ -105,23 +97,7 @@ Keep in mind that on each system reboot, you'll have to run the following comman
 If your system is UNIX-like (i.e. it runs **MacOS** or a **Linux** distribution) you can append to your `.bashrc` file the following snippet, which will allow you to perform common tasks with some handy aliases.
 ```
 
-export DOCKER_MACHINE="default"
-
-# Starts the docker machine and loads its configuration values into the shell
-startDockerMachine() {
-  local domStatus="$(docker-machine status $DOCKER_MACHINE)"
-  if [[ $domStatus != "Stopped" ]] ; then
-    eval $(docker-machine env)
-    echo "All done. Docker Machine ready."
-  else 
-  	docker-machine start $DOCKER_MACHINE > /dev/null 2>&1
-  	startDockerMachine
-  fi
-}
-
 alias doc='docker-compose'
-alias dom-start="startDockerMachine"
-alias dom-stop="docker-machine stop $DOCKER_MACHINE"
 
 ```
 
@@ -135,7 +111,7 @@ If you are developing the project using PHPStorm, you can configure your IDE in 
 	- Head to `Preferences | Languages & Frameworks | PHP` and click on the button `...` in order to configure a new interpreter.
 	- Click on the `+` button choosing `From Docker, Vagrant, VM, etc`.
 	- Choose `Docker` from the radio button choices.
-	- Add a new server by clicking on `New...` in *Server* row.
+	- Add a new server by clicking on `New...` in *Server* row and picking `Docker for Windows|Mac|Linux` choice (not the `Docker Machine` one).
 	- In the dropdown relative to "Image name", choose `PROJECT_app:php`.
 	- Click on `Ok` and wait for the IDE to check that everything is ok.
 	- Click on `Ok` once again to head back to the main settings window.
