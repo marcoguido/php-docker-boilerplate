@@ -125,3 +125,36 @@ If you are developing the project using PHPStorm, you can configure your IDE in 
 	- Complete the procedure by clicking on `Apply` and closing the settings window.
 
 You should now be able to easily debug your php code with the aid of the powerful `XDebug`.
+
+
+### **VSCode** configuration
+
+If you are developing the project using VSCode, you can configure your Editor in order to make use of the `XDebug` debugger. The steps to enable it are the following:
+
+1. Check if your `.env` file had the value `true` set for the variable `D_INSTALL_XDEBUG`. If not, update the value and rebuild the container with the command `docker-compose build php`.
+2. Open VSCode and head to the `Extensions` tab
+3. Search the extension called `PHP Debug` and install it.
+4. Head to the `Debug` section and on the topbar click on the cog and chose `PHP` from the selector in order to add a new PHP debug configuration
+5. A new `launch.json` should open with 2 preconfigured configuration objects.
+6. Edit the one named "Listen for XDebug" by updating the `port` vaue according to your environment file configuration
+7. Add a new property called `pathMappings` which type has to be Object.
+8. Inside the newly created object, create a new field. The key of the field has to be the path to the project module *inside the docker container* and its value must be the full path of the project module root folder inside your host computer. The result should be similar to the following snippet:
+
+```
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": <ENV D_PHP_XDEBUG_REMOTE_PORT VALUE>,
+      "pathMappings": {
+        "/var/www/html/<MODULE FOLDER>": "/PATH/TO/PROJECT/<MODULE FOLDER>",
+      }
+    },
+  ]
+}
+```
+
+You should now be able to easily debug your php code with the aid of the powerful `XDebug`.
