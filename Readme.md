@@ -56,10 +56,12 @@ Depending on the chosen scenario, the configuration procedure can be slightly di
 1. Clone your project in a folder or create a new one. Let's say that your project now resides in a folder called `R`.
 2. Clone this repository in a folder outside `R` and then move every file contained in that folder inside `R`. Left out only the folder `.git` and the `.gitignore` file.
 
+## Configuration
+
 Either you are in the first or in the second case, the following steps are the same for both scenarios. The prerequisite is to follow **each one** of the following steps inside the `R` directory.
 
-1. Set docker configuration variables according to the `.env.example` file either by renaming it to `.env` or, if you are in the **second scenario** and you already have a `.env`, file simply by appending the variables in the `.env.example` to your `.env` file. Please keep in mind that **each variable** in the original set (the ones in the `.env.example` file) must be present in the resulting file, without any exception.
-2. Depending on the webserver you want to use, clone the default virtualhost file either for `nginx` or `apache`, respectively inside `docker/webservers/apache/conf/vhosts` or `docker/webservers/nginx/conf` folder.
+1. Set docker configuration variables according to the `.env.example` file either by renaming it to `.env` or, if you are in the **second scenario** and you already have a `.env`, file simply by appending the variables in the `.env.example` to your `.env` file. Please keep in mind that **each variable of the services you want to use for your project** in the original set (the ones in the `.env.example` file) must be present in the resulting file.
+2. Depending on the webserver you want to use, copy the default _virtualhost_ file either for `nginx` or `apache`, respectively inside `docker/webservers/apache/conf/vhosts` or `docker/webservers/nginx/conf` folder.
 3. Execute in terminal `docker-compose --build ` in order to build all the stuff. If you wish to only build the modules that you need, you can do it by appending to the previous command one or more of the following services:
 	- `php`,
 	- `apache`,
@@ -84,17 +86,17 @@ Inside it you can compile your assets, download `composer` libraries, execute `a
 
 ## Notes
 
-Keep in mind that on each system reboot, you'll have to run the following commands to bring up the development environment:
-1. In terminal run `docker-machine start`.
-2. Execute `eval $(docker-machine env)`.
-3. `cd` to the project directory (the one containing this `Readme`).
-4. Execute `docker-compose up -d php` followed by the docker services required by your configuration (the ones that you previously built and configured).
+- Keep in mind that on each system reboot, you'll have to run the following commands to bring up the development environment:
+    1. `cd` to the project directory (the one containing this `Readme`).
+    2. Execute `docker-compose up -d php` followed by the docker services required by your configuration (the ones that you previously built and configured).
+- If you want to connect to one of the DBMS container you started from your **host** computer, as `host` value remember to set your _HOME IP_ (`127.0.0.1`) and as port the standard values for each DBMS but followed by a `0` (i.e. `33060` for **MySQL** and `54320` for **PostgreSQL**).
+- If you have to connect your project to a DBMS remember to use the standard ports for each system (i.e. `3306` for **MySQL** and `5432` for **PostgreSQL**) and for the connection `host` use the name of the service (`mysql` or `postgres`).
 
 ## Extras
 
 ### Handy shortcuts
 
-If your system is UNIX-like (i.e. it runs **MacOS** or a **Linux** distribution) you can append to your `.bashrc` file the following snippet, which will allow you to perform common tasks with some handy aliases.
+If your system is UNIX-like (i.e. it runs **MacOS** or a **Linux** distribution) you can append to your `.bashrc` file the following snippet, which will allow you to perform common tasks with a handy alias.
 ```
 
 alias doc='docker-compose'
