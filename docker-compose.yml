@@ -111,11 +111,12 @@ services:
     build:
       args:
         - POSTGRES_VERSION=${D_POSTGRES_VERSION}
-        - POSTGRES_USER=${D_POSTGRES_USER}
-        - POSTGRES_PASSWORD=${D_POSTGRES_PASSWORD}
       context: .
       dockerfile: ./docker/postgres/Dockerfile
     env_file: .env
+    environment:
+      - POSTGRES_USER=${D_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${D_POSTGRES_PASSWORD}
     networks:
       project:
       database:
@@ -125,7 +126,7 @@ services:
       - "54320:5432"
     restart: on-failure
     volumes:
-        - pgdata:/var/lib/postgresql/data/:rw
+        - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
 
   redis:
     image: redis:alpine
@@ -135,6 +136,3 @@ services:
 networks:
   project:
   database:
-
-volumes:
-  pgdata: {}
