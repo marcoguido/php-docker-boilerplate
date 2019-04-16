@@ -138,7 +138,7 @@ If you are developing the project using VSCode, you can configure your Editor in
 3. Search the extension called `PHP Debug` and install it.
 4. Head to the `Debug` section and on the topbar click on the cog and chose `PHP` from the selector in order to add a new PHP debug configuration
 5. A new `launch.json` should open with 2 preconfigured configuration objects.
-6. Edit the one named "Listen for XDebug" by updating the `port` vaue according to your environment file configuration
+6. Edit the one named "Listen for XDebug" by updating the `port` value according to your environment file configuration
 7. Add a new property called `pathMappings` which type has to be Object.
 8. Inside the newly created object, create a new field. The key of the field has to be the path to the project module *inside the docker container* and its value must be the full path of the project module root folder inside your host computer. The result should be similar to the following snippet:
 

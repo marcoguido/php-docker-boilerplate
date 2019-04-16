@@ -24,6 +24,7 @@ COPY ./docker/php/conf/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 RUN mkdir -p /usr/share/man/{man1,man7} \
     && apt-get update \
     && apt-get install -y \
+        apt-transport-https \
         libxml2-dev \
         libicu-dev \
         libfreetype6-dev \
@@ -215,9 +216,7 @@ RUN if [ ${INSTALL_YARN} = true ] && [ ${INSTALL_NVM} = true ] ; then \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && apt update \
-    && apt install -yqq \
-        apt-transport-https \
-        yarn \
+    && apt install -yqq yarn \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean \
 ;fi
