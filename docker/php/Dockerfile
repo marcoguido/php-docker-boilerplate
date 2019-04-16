@@ -214,8 +214,8 @@ RUN if [ ${INSTALL_YARN} = true ] && [ ${INSTALL_NVM} = true ] ; then \
     && nvm use ${PREFERRED_NODE_VERSION} \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt get update \
-    && apt-get install -yqq \
+    && apt update \
+    && apt install -yqq \
         apt-transport-https \
         yarn \
     && rm -rf /var/lib/apt/lists/* \
