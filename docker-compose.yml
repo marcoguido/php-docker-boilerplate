@@ -130,6 +130,8 @@ services:
 
   redis:
     image: redis:alpine
+    networks:
+      project:
     ports:
       - "63790:6379"
 
