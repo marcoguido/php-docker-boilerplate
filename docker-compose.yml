@@ -7,7 +7,7 @@ services:
       args:
         - NGINX_VERSION=${D_NGINX_VERSION}
         - HTTP_PORT=${D_HTTP_PORT}
-        - HTTPS_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTPS_PORT}
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/nginx/Dockerfile
@@ -15,8 +15,8 @@ services:
     networks:
       project:
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:${D_HTTP_PORT}"
+      - "443:${D_HTTPS_PORT}"
     restart: on-failure
     volumes:
         - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
@@ -35,8 +35,8 @@ services:
     networks:
       project:
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:${D_HTTP_PORT}"
+      - "443:${D_HTTPS_PORT}"
     restart: on-failure
     volumes:
       - ./docker/webservers/apache/conf/vhosts:/etc/apache2/sites-available/:rw
