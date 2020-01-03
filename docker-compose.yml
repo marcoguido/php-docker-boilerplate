@@ -26,7 +26,7 @@ services:
     build:
       args:
         - HTTP_PORT=${D_HTTP_PORT}
-        - HTTPS_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTPS_PORT}
         - PHP_PORT=${D_PHP_PORT}
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
