@@ -25,6 +25,7 @@ RUN mkdir -p /usr/share/man/{man1,man7} \
     && apt-get update \
     && apt-get install -y \
         apt-transport-https \
+        libonig-dev \
         libxml2-dev \
         libicu-dev \
         libfreetype6-dev \
@@ -57,7 +58,7 @@ RUN docker-php-ext-install opcache \
     && docker-php-ext-install bz2 \
     && docker-php-ext-install mbstring \
     && docker-php-ext-install curl \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd
 
 
@@ -81,11 +82,7 @@ RUN if [ ${INSTALL_MCRYPT} = true ] ; then \
 
 ARG INSTALL_MYSQL=false
 RUN if [ ${INSTALL_MYSQL} = true ]; then \
-    apt-get update -yqq \
-    && apt-get install -y mysql-client \
-    && docker-php-ext-install pdo_mysql \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
+    docker-php-ext-install pdo_mysql \
 ;fi
 
 ######################
@@ -114,7 +111,6 @@ ARG X_REMOTE_ENABLE
 ARG X_REMOTE_AUTOSTART
 ARG X_REMOTE_PORT
 ARG X_IDEKEY
-ARG X_LOG_DIR
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     touch /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_enable=${X_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/xdebug.ini \
@@ -122,7 +118,6 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     && echo "xdebug.remote_autostart=${X_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_port=${X_REMOTE_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.idekey=${X_IDEKEY}" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_log=${X_LOG_DIR}" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
 ;fi
