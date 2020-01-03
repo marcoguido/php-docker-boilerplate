@@ -19,8 +19,8 @@ services:
       - "443:${D_HTTPS_PORT}"
     restart: on-failure
     volumes:
-        - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
-        - ./:/var/www/html
+      - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
+      - ./:/var/www/html
 
   apache:
     build:
@@ -127,7 +127,7 @@ services:
       - "54320:5432"
     restart: on-failure
     volumes:
-        - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
+      - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
 
   redis:
     image: redis:alpine
