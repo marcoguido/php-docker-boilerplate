@@ -7,7 +7,7 @@ services:
       args:
         - NGINX_VERSION=${D_NGINX_VERSION}
         - HTTP_PORT=${D_HTTP_PORT}
-        - HTTPS_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTPS_PORT}
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/nginx/Dockerfile
@@ -15,18 +15,18 @@ services:
     networks:
       project:
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:${D_HTTP_PORT}"
+      - "443:${D_HTTPS_PORT}"
     restart: on-failure
     volumes:
-        - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
-        - ./:/var/www/html
+      - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
+      - ./:/var/www/html
 
   apache:
     build:
       args:
         - HTTP_PORT=${D_HTTP_PORT}
-        - HTTPS_PORT=${D_HTTP_PORT}
+        - HTTPS_PORT=${D_HTTPS_PORT}
         - PHP_PORT=${D_PHP_PORT}
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
@@ -35,8 +35,8 @@ services:
     networks:
       project:
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:${D_HTTP_PORT}"
+      - "443:${D_HTTPS_PORT}"
     restart: on-failure
     volumes:
       - ./docker/webservers/apache/conf/vhosts:/etc/apache2/sites-available/:rw
@@ -61,7 +61,6 @@ services:
         - X_REMOTE_AUTOSTART=${D_PHP_XDEBUG_REMOTE_AUTOSTART}
         - X_REMOTE_PORT=${D_PHP_XDEBUG_REMOTE_PORT}
         - X_IDEKEY=${D_PHP_XDEBUG_IDEKEY}
-        - X_LOG_DIR=${D_PHP_XDEBUG_LOG_DIR}
         ## Other PHP modules
         - INSTALL_PHPREDIS=${D_INSTALL_PHPREDIS}
         - INSTALL_INTL=${D_INSTALL_INTL}
@@ -127,7 +126,7 @@ services:
       - "54320:5432"
     restart: on-failure
     volumes:
-        - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
+      - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
 
   redis:
     image: redis:alpine
