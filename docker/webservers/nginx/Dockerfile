@@ -26,8 +26,6 @@ RUN usermod -u 1000 www-data
 
 WORKDIR /var/www/html
 
-ARG HTTP_PORT
-EXPOSE ${HTTP_PORT}
-
-ARG HTTPS_PORT
-EXPOSE ${HTTPS_PORT}
+# Expose webserver ports
+EXPOSE 80
+EXPOSE 443

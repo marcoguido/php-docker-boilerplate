@@ -6,6 +6,8 @@ Most of the aspects of the configuration can be tuned via a `.env` file to be cr
 ## Contents
 This configuration comprehends:
 
+- Docker-sync support
+
 - 2 web servers (`apache` and `nginx`)
 
 - 2 DBMSs (`mysql`, `postgresql`)
@@ -13,8 +15,6 @@ This configuration comprehends:
 - `redis` for cache management
 
 - A `php` container: this is the main docker container and the one to be used to compile and run commands against the project you want to build (you are most likely to always run a bash session inside it).
-
-- Docker-sync support (next release)
 
 ## Table of contents
 
