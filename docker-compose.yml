@@ -9,8 +9,9 @@ services:
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/nginx/Dockerfile
-    container_name: "{$D_PROJECT_NAME}_nginx"
+    container_name: "$D_PROJECT_NAME.nginx"
     env_file: .env
+    image: $D_PROJECT_NAME.nginx:$D_NGINX_VERSION
     networks:
       project:
     ports:
@@ -28,8 +29,9 @@ services:
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/apache/Dockerfile
-    container_name: "{$D_PROJECT_NAME}_apache"
+    container_name: "$D_PROJECT_NAME.apache"
     env_file: .env
+    image: $D_PROJECT_NAME.apache:latest
     networks:
       project:
     ports:
@@ -48,11 +50,9 @@ services:
         - PHP_PORT=${D_PHP_PORT}
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
 
-        # XDebug
-        - PHP_XDEBUG_REMOTE_PORT=${D_PHP_XDEBUG_REMOTE_PORT}
-
         # PHP modules
         ## XDebug
+        - PHP_XDEBUG_REMOTE_PORT=${D_PHP_XDEBUG_REMOTE_PORT}
         - INSTALL_XDEBUG=${D_INSTALL_XDEBUG}
         - X_REMOTE_ENABLE=${D_PHP_XDEBUG_REMOTE_ENABLE}
         - X_REMOTE_HOST=${D_PHP_XDEBUG_REMOTE_HOST}
@@ -75,10 +75,11 @@ services:
         - INSTALL_GULP=${D_INSTALL_GULP}
       context: .
       dockerfile: ./docker/php/Dockerfile
-    container_name: "{$D_PROJECT_NAME}_php"
+    container_name: "$D_PROJECT_NAME.php"
     env_file: .env
     environment:
       - PHP_IDE_CONFIG=serverName=docker-server
+    image: $D_PROJECT_NAME.php:$D_PHP_VERSION
     networks:
       project:
       database:
@@ -91,11 +92,12 @@ services:
         - MYSQL_VERSION=${D_MYSQL_VERSION}
       context: .
       dockerfile: ./docker/mysql/Dockerfile
-    container_name: "{$D_PROJECT_NAME}_mysql"
+    container_name: "$D_PROJECT_NAME.mysql"
     env_file: .env
     environment:
       - MYSQL_USER=${D_MYSQL_USER}
       - MYSQL_ROOT_PASSWORD=${D_MYSQL_ROOT_PASSWORD}
+    image: $D_PROJECT_NAME.mysql:$D_MYSQL_VERSION
     networks:
       project:
       database:
@@ -113,11 +115,12 @@ services:
         - POSTGRES_VERSION=${D_POSTGRES_VERSION}
       context: .
       dockerfile: ./docker/postgres/Dockerfile
-    container_name: "{$D_PROJECT_NAME}_postgresql"
+    container_name: "$D_PROJECT_NAME.postgresql"
     env_file: .env
     environment:
       - POSTGRES_USER=${D_POSTGRES_USER}
       - POSTGRES_PASSWORD=${D_POSTGRES_PASSWORD}
+    image: $D_PROJECT_NAME.postgresql:$D_POSTGRES_VERSION
     networks:
       project:
       database:
@@ -130,7 +133,7 @@ services:
       - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
 
   redis:
-    container_name: "{$D_PROJECT_NAME}_redis"
+    container_name: "$D_PROJECT_NAME.redis"
     image: redis:alpine
     networks:
       project:
