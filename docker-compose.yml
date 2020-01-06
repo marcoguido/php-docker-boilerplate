@@ -11,6 +11,7 @@ services:
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/nginx/Dockerfile
+    container_name: "{$D_PROJECT_NAME}_nginx"
     env_file: .env
     networks:
       project:
@@ -20,7 +21,7 @@ services:
     restart: on-failure
     volumes:
       - ./docker/webservers/nginx/conf:/etc/nginx/conf.d/:rw
-      - ./:/var/www/html
+      - docker-sync:/var/www/html:nocopy
 
   apache:
     build:
@@ -31,6 +32,7 @@ services:
         - CERT_CONTENT=${D_SSL_CERT_CONTENT}
       context: .
       dockerfile: ./docker/webservers/apache/Dockerfile
+    container_name: "{$D_PROJECT_NAME}_apache"
     env_file: .env
     networks:
       project:
@@ -40,7 +42,7 @@ services:
     restart: on-failure
     volumes:
       - ./docker/webservers/apache/conf/vhosts:/etc/apache2/sites-available/:rw
-      - ./:/var/www/html
+      - docker-sync:/var/www/html:nocopy
 
   php:
     build:
@@ -77,6 +79,7 @@ services:
         - INSTALL_GULP=${D_INSTALL_GULP}
       context: .
       dockerfile: ./docker/php/Dockerfile
+    container_name: "{$D_PROJECT_NAME}_php"
     env_file: .env
     environment:
       - PHP_IDE_CONFIG=serverName=docker-server
@@ -84,7 +87,7 @@ services:
       project:
       database:
     volumes:
-      - ./:/var/www/html
+      - docker-sync:/var/www/html:nocopy
 
   mysql:
     build:
@@ -92,6 +95,7 @@ services:
         - MYSQL_VERSION=${D_MYSQL_VERSION}
       context: .
       dockerfile: ./docker/mysql/Dockerfile
+    container_name: "{$D_PROJECT_NAME}_mysql"
     env_file: .env
     environment:
       - MYSQL_USER=${D_MYSQL_USER}
@@ -113,6 +117,7 @@ services:
         - POSTGRES_VERSION=${D_POSTGRES_VERSION}
       context: .
       dockerfile: ./docker/postgres/Dockerfile
+    container_name: "{$D_PROJECT_NAME}_postgresql"
     env_file: .env
     environment:
       - POSTGRES_USER=${D_POSTGRES_USER}
@@ -129,6 +134,7 @@ services:
       - ./docker/postgres/pgdata:/var/lib/postgresql/data/:rw
 
   redis:
+    container_name: "{$D_PROJECT_NAME}_redis"
     image: redis:alpine
     networks:
       project:
@@ -138,3 +144,7 @@ services:
 networks:
   project:
   database:
+
+volumes:
+  docker-sync:
+    external: true

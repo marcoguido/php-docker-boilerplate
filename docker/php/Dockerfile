@@ -1,5 +1,5 @@
 ARG PHP_VERSION
-FROM php:${PHP_VERSION}
+FROM php:${PHP_VERSION}-fpm
 
 LABEL maintainer="Marco Guidolin"
 
