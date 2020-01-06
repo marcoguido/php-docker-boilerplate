@@ -9,4 +9,4 @@ syncs:
     src: './' # host source directory
     sync_strategy: 'native_osx'
 
-    sync_excludes: ['docker', '.git', '.idea', '.vs-code', 'node_modules', 'vendor'] # ignored directories
+    sync_excludes: ['docker', '.git', '.idea', '.vs-code', 'node_modules'] # ignored directories
