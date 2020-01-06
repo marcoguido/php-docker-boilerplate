@@ -39,11 +39,9 @@ RUN usermod -u 1000 www-data
 
 RUN mkdir /var/www/logs
 
-ARG HTTP_PORT
-EXPOSE ${HTTP_PORT}
-
-ARG HTTPS_PORT
-EXPOSE ${HTTPS_PORT}
+# Expose webserver ports
+EXPOSE 80
+EXPOSE 443
 
 ENTRYPOINT ["/opt/docker/bin/entrypoint.sh"]
 

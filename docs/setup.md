@@ -20,22 +20,18 @@ Either you are in the [first](./usages.md#first-case-scenario) or in the [second
 	- `postgres`,
 	- `redis`.
 
-5. Now that everything is built, we can start the dev environment by running `docker-compose up -d php` followed by one or more of the available services.
-    
-    NOTE: Pick only one between the available web servers as the ports exposed to the host system are `80` and `443` **by default for both of them**.
-    
-    An **example** of the command can be:
-    
-    ```bash
-    docker-compose up -d php redis mysql apache
-    ```
+5. Now that everything is built, we can start the dev environment with the `Docker Sync` utility. The first run will be quite slow (can even require ~15 minutes) because every file is cloned to the virtual disk handled by the tool. To begin the synchronization, run in a terminal window `docker-sync clean` followed by `docker-sync sync`.
 
-    At this point, the containers (each service) specified in the previous command should all be up and running.
-    
-6. To test that everything is working fine, open your favourite browser and try entering one of the urls you earlier registered in the *hosts* file at point 1 of current tasks list.
-    
-7. If everything succeeded, you should be able to access the console of the `php` container (which is the main one) by running:
-    
+6. When the previous task ends, run in terminal `docker-sync-stack start`, which will act as a `docker-compose up`.
+
+    NOTE: The previous command will start *every* service defined in the `docker-compose.yml` file. If you do not need some of them, simply delete the service definition from the `docker-compose.yml` file.
+
+    At this point, all the containers (each service) should all be up and running and the output of each of them will be printed to the terminal window.
+
+7. To test that everything is working fine, open your favourite browser and try entering one of the urls you earlier registered in the *hosts* file at point 1 of current tasks list.
+
+8. If everything succeeded, you should be able to access the `php` container (which is the main one) by running in a new terminal window:
+
    ```bash
     docker-compose exec php bash
     ```
