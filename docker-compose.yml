@@ -140,6 +140,25 @@ services:
     ports:
       - "63790:6379"
 
+
+  minio:
+    build:
+      context: .
+      dockerfile: ./docker/minio/Dockerfile
+    container_name: "$D_PROJECT_NAME.mysql"
+    env_file: .env
+    environment:
+      - MINIO_ACCESS_KEY=$D_MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$D_MINIO_SECRET_KEY
+    image: $D_PROJECT_NAME.minio
+    networks:
+      - project
+    ports:
+      - "$D_MINIO_PORT:9000"
+    volumes:
+      - ./docker/minio/data:/export
+      - ./docker/minio/config:/root/.minio
+
 networks:
   project:
   database:
