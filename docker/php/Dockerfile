@@ -25,11 +25,9 @@ RUN mkdir -p /usr/share/man/{man1,man7} \
     && apt-get update \
     && apt-get install -y \
         apt-transport-https \
-        libonig-dev \
         libxml2-dev \
         libicu-dev \
         libfreetype6-dev \
-        libmcrypt-dev \
         libjpeg62-turbo-dev \
         libcurl4-gnutls-dev \
         libbz2-dev \
@@ -68,13 +66,32 @@ RUN docker-php-ext-install opcache \
 ARG INSTALL_MCRYPT=false
 RUN if [ ${INSTALL_MCRYPT} = true ] ; then \
         if [ $(php -v | grep ^PHP | cut -d ' ' -f2 | cut -d '.' -f 1-2) = "7.0" ] ; then \
-            docker-php-ext-install mcrypt \
+            apt-get update \
+            && apt-get install -yqq \
+                libonig-dev \
+                libmcrypt-dev \
+            && docker-php-ext-install mcrypt \
+            && rm -rf /var/lib/apt/lists/* \
+            && apt-get clean \
+        ; elif [ $(php -v | grep ^PHP | cut -d ' ' -f2 | cut -d '.' -f 1-2) = "7.1" ] ; then \
+            apt-get update \
+            && apt-get install -yqq \
+                libonig-dev \
+                libmcrypt-dev \
+            && docker-php-ext-install mcrypt \
+            && rm -rf /var/lib/apt/lists/* \
+            && apt-get clean \
         ; else \
-            pecl install mcrypt-1.0.2 \
+            apt-get update \
+            && apt-get install -yqq \
+                libonig-dev \
+                libmcrypt-dev \
+            && pecl install mcrypt-1.0.2 \
             && docker-php-ext-enable mcrypt \
+            && rm -rf /var/lib/apt/lists/* \
+            && apt-get clean \
         ;fi \
 ;fi
-
 
 ######################
 # MYSQL INSTALLATION #
@@ -228,8 +245,6 @@ RUN if [ ${INSTALL_NVM} = true ] && [ ${INSTALL_GULP} = true ]; then \
     && nvm install ${PREFERRED_NODE_VERSION} \
     && npm i -g gulp \
 ;fi
-
-
 
 ####################
 # SSL certificates #
