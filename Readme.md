@@ -14,6 +14,8 @@ This configuration comprehends:
 
 - `redis` for cache management
 
+- `minio` as storage layer (exposes a set of APIs compatible with Amazon S3)
+
 - A `php` container: this is the main docker container and the one to be used to compile and run commands against the project you want to build (you are most likely to always run a bash session inside it).
 
 ## Table of contents
