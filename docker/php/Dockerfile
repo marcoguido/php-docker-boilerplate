@@ -192,7 +192,7 @@ RUN if [ ${INSTALL_SASS} = true ]; then \
 ARG INSTALL_NVM=false
 ARG PREFERRED_NODE_VERSION
 RUN if [ ${INSTALL_NVM} = true ]; then \
-    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash \
+    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.35.2/install.sh | bash \
     && source $HOME/.nvm/nvm.sh \
     && nvm --version \
     && nvm install ${PREFERRED_NODE_VERSION} \
@@ -205,7 +205,7 @@ RUN if [ ${INSTALL_NVM} = true ]; then \
 # Installing Yarn has the installation of NVM as prerequisite
 ARG INSTALL_YARN=false
 RUN if [ ${INSTALL_YARN} = true ] && [ ${INSTALL_NVM} = true ] ; then \
-    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash \
+    curl -o - https://raw.githubusercontent.com/creationix/nvm/v0.35.2/install.sh | bash \
     && source $HOME/.nvm/nvm.sh \
     && nvm use ${PREFERRED_NODE_VERSION} \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
