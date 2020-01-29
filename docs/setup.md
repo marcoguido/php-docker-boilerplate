@@ -18,6 +18,7 @@ Either you are in the [first](./usages.md#first-case-scenario) or in the [second
 	- `nginx`,
 	- `mysql`,
 	- `postgres`,
+	- `minio`,
 	- `redis`.
 
 5. Now that everything is built, we can start the dev environment with the `Docker Sync` utility. The first run will be quite slow (can even require ~15 minutes) because every file is cloned to the virtual disk handled by the tool. To begin the synchronization, run in a terminal window `docker-sync clean` followed by `docker-sync sync`.
