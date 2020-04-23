@@ -1,3 +1,11 @@
+---
+
+# NOTE
+This repository is deprecated in favor of my new project: [Pocker](https://github.com/marcoguido/poker).
+Pocker offers the same features and much more, with improved stability and an easier setup.  
+Give it a try :wink:
+
+---
 # Dockerized Project Boilerplate
 This repository contains a basic scaffolding to be used to setup a PHP (>= 7.0) project and can be used on Linux, MacOS and Windows. For the latter we're supporting only Windows versions with virtualization-enabled capabilities (e.g. Windows Pro and Education)
  
